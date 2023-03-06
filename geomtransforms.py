@@ -8,7 +8,7 @@ from OpenGL.GLU import *
 width, height = 800, 600                                                    # width and height of the screen created
 
 ########################################### Lecture examples ####################################################
-def example_initTeapot():
+def example_initTeapot():  # initiated at  origin
     glColor3f(1.0, 1.0, 1.0)                                                # specify object color as white
     glLineWidth(1.0)                                                        # reset line width to 1.0
     glutWireTeapot(5.0)                                                     # draw a teaport of size 5 in wireframe mode
@@ -19,12 +19,12 @@ def example_translate():
     glutWireTeapot(5.0)
 
 def example_scale():
-    glScalef(2.0, 2.0, 2.0)                                              # construct scaling matrix with three scaling factors
+    glScalef(2.0, 2.0, 2.0)                                                 # construct scaling matrix with three scaling factors
     glColor3f(1.0, 0.2, 0.6)                                                # draw the transformed teaport in pink
     glutWireTeapot(5.0)
 
 def example_rotate():
-    glRotatef(-30.0, 0.0, 0.0, 1.0)                                          # construct rotation matrix along z-axis (0,0,1)
+    glRotatef(-90.0, 0.0, 0.0, 1.0)                                         # construct rotation matrix along z-axis (0,0,1)
     glColor3f(1.0, 0.2, 0.6)                                                # draw the transformed teaport in pink
     glutWireTeapot(5.0)
 
@@ -79,6 +79,10 @@ def exercise1_transfOrder():
     glEnd() 
 
     # TODO: rotate the triangle around a pivot-point (4, 3, 0.1) along z-axis about 90 degrees
+    # work bottom to top
+    glTranslatef(4.0, 3.0, 0.0) # third translate object back to pivot point
+    glRotatef(90.0, 0.0, 0.0, 1.0) # second rotate object
+    glTranslatef(-4.0, -3.0, 0.0) # first translate object to origin (except the axis that is being rotated on)
   
     # draw the transformed triangle centered at (4, 3, 0.1) in blue
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)                               
@@ -96,11 +100,17 @@ def exercise2_push_pop():
   
     # TODO: Rotate the cylinder around x-axis by -90
     glColor3f(1.0, 1.0, 0.0)
-    gluCylinder(quadratic, 2.5, 2.5, 10.0, 32, 32)
+    glPushMatrix() # push matrix to stack
+    glRotatef(-90.0, 1.0, 0.0, 0.0) # transform (rotate) cylinder
+    gluCylinder(quadratic, 2.5, 2.5, 10.0, 32, 32) # quadratic, radius, radius, length, layers of mesh
+    glPopMatrix() # pop matrix from stack (resetting any transformations made)
 
     # TODO: Translate the sphere by (10, 10, 0)
     glColor3f(0.0, 1.0, 0.0)
-    gluSphere(quadratic, 2.5, 32, 32)
+    glPushMatrix() # push matrix to stack
+    glTranslatef(10.0, 10.0, 0.0) # transform (translate) sphere
+    gluSphere(quadratic, 2.5, 32, 32) # quadratic, radius, layers of mesh
+    glPopMatrix() # pop matrix from stack
 
 ########################################### OpenGL Program ####################################################
 def drawAxes():                                                             # draw x-axis and y-axis
@@ -122,7 +132,7 @@ def draw():                                                                 # Th
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)                        # clear the buffers initialized in the display mode
     
     # initialize a teapot in white at origin
-    example_initTeapot()
+    #example_initTeapot()
 
     glPushMatrix()                                                          # save the current model-view trans matrix in the stack
     
@@ -139,7 +149,7 @@ def draw():                                                                 # Th
     #exercise1_transfOrder()
 
     # push-pop example: transform 3D objects separately 
-    #exercise2_push_pop()
+    exercise2_push_pop()
 
     glPopMatrix()                                                           # restore the saved model-view trans matrix back
 
